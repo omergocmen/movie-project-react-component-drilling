@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "../App.css";
 
-import axios from "axios";
+import staticMovies from "../data/movies";
 import MovieList from "./movieList";
 import Searchbar from "./searchbar";
 import EditMovie from "./editMovie";
@@ -14,11 +14,27 @@ import {
 } from "react-router-dom";
 import AddMovie from "./addMovie";
 
+const STORAGE_KEY = "cinehub_movies";
+
+function loadMovies() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch (e) { /* ignore */ }
+  return staticMovies;
+}
+
+function saveMovies(movies) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(movies));
+  } catch (e) { /* ignore */ }
+}
+
 export default class App extends Component {
   constructor() {
     super();
     this.state = {
-      movies: [],
+      movies: loadMovies(),
       searchQuery: "",
       loading: false,
       error: null,
@@ -36,69 +52,47 @@ export default class App extends Component {
     this.setState({ searchQuery: event.target.value });
   };
 
-  addMovie = async (movie) => {
+  addMovie = (movie) => {
     const maxId = this.state.movies.length > 0
-      ? Math.max(...this.state.movies.map(m => m.id))
+      ? Math.max(...this.state.movies.map(m => parseInt(m.id) || 0))
       : 0;
-    movie.id = maxId + 1;
-    movie.rating = parseFloat(movie.rating);
+    const newMovie = {
+      ...movie,
+      id: String(maxId + 1),
+      rating: parseFloat(movie.rating),
+      year: parseInt(movie.year)
+    };
 
-    try {
-      this.setState({ loading: true });
-      await axios.post(`http://localhost:3002/movies`, movie);
-      this.setState(state => ({
-        movies: state.movies.concat([movie]),
-        loading: false
-      }));
-      alert("Film Başarıyla Eklendi");
-      window.location.href = '/';
-    } catch (err) {
-      this.setState({ error: err.message, loading: false });
-      alert('Hata: ' + err.message);
-    }
+    const updated = [...this.state.movies, newMovie];
+    saveMovies(updated);
+    this.setState({ movies: updated });
+    alert("Film Başarıyla Eklendi");
+    window.location.href = '/';
   };
 
-  deleteMovieToUi = async (movie) => {
+  updateMovie = (updatedMovie) => {
+    const updated = this.state.movies.map(m =>
+      String(m.id) === String(updatedMovie.id) ? updatedMovie : m
+    );
+    saveMovies(updated);
+    this.setState({ movies: updated });
+    alert("Film Başarıyla Güncellendi");
+    window.location.href = '/';
+  };
+
+  deleteMovieToUi = (movie) => {
     if (window.confirm(`"${movie.name}" filmini silmek istediğinizden emin misiniz?`)) {
-      try {
-        this.setState({ loading: true });
-        await axios.delete(`http://localhost:3002/movies/${movie.id}`);
-        const newMovieList = this.state.movies.filter((m) => m.id !== movie.id);
-        this.setState((state) => ({
-          movies: newMovieList,
-          loading: false
-        }));
-        alert("Film Silindi");
-      } catch (err) {
-        this.setState({ error: err.message, loading: false });
-        console.error(err);
-      }
+      const updated = this.state.movies.filter(m => String(m.id) !== String(movie.id));
+      saveMovies(updated);
+      this.setState({ movies: updated });
+      alert("Film Silindi");
     }
   };
-
-  componentDidMount() {
-    this.getMovies();
-  }
-
-  async getMovies() {
-    try {
-      this.setState({ loading: true, error: null });
-      const response = await axios.get("http://localhost:3002/movies");
-      const movies = Array.isArray(response.data) ? response.data : response.data.movies;
-      this.setState({ movies, loading: false });
-    } catch (err) {
-      this.setState({ error: "Filmler yüklenemedi: " + err.message, loading: false });
-      console.error(err);
-    }
-  }
 
   applyFilters = (movies) => {
     const { searchQuery, filters } = this.state;
-
     return movies.filter((movie) => {
-      const matchesSearch = movie.name
-        .toLowerCase()
-        .indexOf(searchQuery.toLowerCase()) !== -1;
+      const matchesSearch = movie.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1;
       const matchesYear = !filters.year || movie.year === parseInt(filters.year);
       const matchesGenre = !filters.genre || movie.genre === filters.genre;
       const matchesRating = !filters.rating || parseFloat(movie.rating) >= parseFloat(filters.rating);
@@ -109,7 +103,6 @@ export default class App extends Component {
   applySorting = (movies) => {
     const { sortBy, sortOrder } = this.state;
     const sorted = [...movies];
-
     sorted.sort((a, b) => {
       let aValue, bValue;
       switch (sortBy) {
@@ -130,15 +123,12 @@ export default class App extends Component {
       if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
-
     return sorted;
   };
 
   handleSortChange = (sortBy) => {
     if (this.state.sortBy === sortBy) {
-      this.setState(prev => ({
-        sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc'
-      }));
+      this.setState(prev => ({ sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc' }));
     } else {
       this.setState({ sortBy, sortOrder: 'asc' });
     }
@@ -146,16 +136,13 @@ export default class App extends Component {
 
   handleFilterChange = (filterType, value) => {
     this.setState(prev => ({
-      filters: {
-        ...prev.filters,
-        [filterType]: value
-      }
+      filters: { ...prev.filters, [filterType]: value }
     }));
   };
 
   render() {
-    let filteredMovies = this.applyFilters(this.state.movies);
-    let sortedMovies = this.applySorting(filteredMovies);
+    const filteredMovies = this.applyFilters(this.state.movies);
+    const sortedMovies = this.applySorting(filteredMovies);
 
     return (
       <Router>
@@ -177,41 +164,26 @@ export default class App extends Component {
           </div>
         </nav>
 
-        {/* ── APP CONTAINER ── */}
         <div className="app-container">
           <Routes>
-
             {/* HOME */}
             <Route
               path="/"
               element={
                 <>
-                  {/* Search */}
                   <Searchbar
                     searchMovieProp={this.searchMovie}
                     onFilterChange={this.handleFilterChange}
                     filters={this.state.filters}
                   />
 
-                  {/* Loading */}
-                  {this.state.loading && (
-                    <div className="loading-state">
-                      <div className="spinner"></div>
-                      <p style={{ color: 'var(--text-muted)', fontSize: '14px', letterSpacing: '0.5px' }}>
-                        Filmler yükleniyor...
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Error */}
                   {this.state.error && (
                     <div className="alert alert-danger" style={{ maxWidth: '1400px', margin: '20px auto' }}>
                       ⚠ {this.state.error}
                     </div>
                   )}
 
-                  {/* Sort Controls */}
-                  {!this.state.loading && this.state.movies.length > 0 && (
+                  {this.state.movies.length > 0 && (
                     <div className="filter-controls">
                       <span className="filter-label-sort">Sırala:</span>
                       <button
@@ -238,15 +210,13 @@ export default class App extends Component {
                     </div>
                   )}
 
-                  {/* Movies Grid */}
-                  {!this.state.loading && sortedMovies.length > 0 && (
+                  {sortedMovies.length > 0 && (
                     <div className="movies-grid">
                       <MovieList movies={sortedMovies} deleteMovie={this.deleteMovieToUi} />
                     </div>
                   )}
 
-                  {/* Filter Empty State */}
-                  {!this.state.loading && sortedMovies.length === 0 && this.state.movies.length > 0 && (
+                  {sortedMovies.length === 0 && this.state.movies.length > 0 && (
                     <div className="empty-state">
                       <div className="empty-state-icon">🔍</div>
                       <h5>Film Bulunamadı</h5>
@@ -254,8 +224,7 @@ export default class App extends Component {
                     </div>
                   )}
 
-                  {/* No Movies */}
-                  {!this.state.loading && this.state.movies.length === 0 && !this.state.error && (
+                  {this.state.movies.length === 0 && (
                     <div className="empty-state">
                       <div className="empty-state-icon">🎭</div>
                       <h5>Henüz Film Yok</h5>
@@ -284,7 +253,10 @@ export default class App extends Component {
               path="/edit/:id"
               element={
                 <div className="detail-container">
-                  <EditMovie />
+                  <EditMovie
+                    movies={this.state.movies}
+                    onUpdateMovie={this.updateMovie}
+                  />
                 </div>
               }
             />
@@ -294,7 +266,10 @@ export default class App extends Component {
               path="/movie/:id"
               element={
                 <div className="detail-container">
-                  <MovieDetail />
+                  <MovieDetail
+                    movies={this.state.movies}
+                    onDeleteMovie={this.deleteMovieToUi}
+                  />
                 </div>
               }
             />
