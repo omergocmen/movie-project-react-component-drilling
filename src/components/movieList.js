@@ -1,27 +1,107 @@
 import React, { Component } from "react";
 
+const genreLabels = {
+  'action': '🔥 Aksiyon',
+  'drama': '🎭 Drama',
+  'comedy': '😂 Komedi',
+  'scifi': '🚀 Sci-Fi',
+  'horror': '👻 Korku',
+  'romance': '💕 Romantik'
+};
+
+const getRatingColor = (rating) => {
+  const r = parseFloat(rating);
+  if (r >= 8) return 'bg-success';
+  if (r >= 6) return 'bg-warning';
+  return 'bg-danger';
+};
+
 export default class movieList extends Component {
   render() {
+    if (this.props.movies.length === 0) {
+      return (
+        <div className="empty-state">
+          <div className="empty-state-icon">🎬</div>
+          <h5>Film Bulunamadı</h5>
+          <p>Arama kriterlerinize uygun film yoktur.</p>
+        </div>
+      );
+    }
+
     return (
-        <div className="row row-cols-1 row-cols-md-3 g-4 m-auto">
+      <>
         {this.props.movies.map((movie) => (
-            <div className="col" key={movie.id} >
-              <div className="card h-100">
-                <img src={movie.imageURL} class="card-img-top" alt="..." />
-                <div className="card-body">
-                  <h5 className="card-title">{movie.name}</h5>
-                  <p className="card-text">
-                    {movie.overview}
-                  </p>
-                  <div className="d-flex justify-content-between">
-                  <button type="button" onClick={()=>{this.props.deleteMovie(movie)}} className="btn btn-danger">Filmi Sil</button>
-                  <span className="badge bg-primary">{movie.rating}</span>
-                  </div>
-                </div>
+          <div key={movie.id} className="card">
+            {/* ── Poster Image ── */}
+            <div className="card-img-container">
+              <img
+                src={movie.imageURL}
+                className="card-img-top"
+                alt={movie.name}
+                onError={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, #1a1a2e, #16213e)';
+                  e.target.style.display = 'none';
+                }}
+              />
+
+              {/* Rating badge on image */}
+              <div className={`card-rating-badge ${getRatingColor(movie.rating)}`}>
+                ⭐ {movie.rating}
+              </div>
+
+              {/* Hover overlay with Quick View button */}
+              <div className="card-img-overlay">
+                <a
+                  href={`/movie/${movie.id}`}
+                  className="overlay-btn"
+                  style={{ textDecoration: 'none' }}
+                >
+                  Detay →
+                </a>
               </div>
             </div>
+
+            {/* ── Card Body ── */}
+            <div className="card-body">
+              <h5 className="card-title">{movie.name}</h5>
+
+              <div className="card-meta-row">
+                {movie.genre && (
+                  <span className="badge bg-info">
+                    {genreLabels[movie.genre] || movie.genre}
+                  </span>
+                )}
+                {movie.year && (
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>
+                    {movie.year}
+                  </span>
+                )}
+              </div>
+
+              <p className="card-text">
+                {movie.overview.substring(0, 90)}...
+              </p>
+
+              {/* Action Buttons */}
+              <div className="btn-group">
+                <a href={`/movie/${movie.id}`} className="btn btn-primary btn-sm" style={{ textDecoration: 'none' }}>
+                  Detay
+                </a>
+                <a href={`/edit/${movie.id}`} className="btn btn-warning btn-sm" style={{ textDecoration: 'none' }}>
+                  Düzenle
+                </a>
+                <button
+                  type="button"
+                  onClick={() => { this.props.deleteMovie(movie); }}
+                  className="btn btn-danger btn-sm"
+                >
+                  Sil
+                </button>
+              </div>
+            </div>
+          </div>
         ))}
-      </div>
+      </>
     );
   }
 }
