@@ -1,0 +1,130 @@
+import React, { Component } from 'react'
+import serialize from 'form-serialize';
+
+export default class editMovie extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { movie: null, error: null };
+    }
+
+    componentDidMount() {
+        this.findMovie();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.movieId !== this.props.movieId) {
+            this.findMovie();
+        }
+    }
+
+    findMovie() {
+        const { movieId, movies = [] } = this.props;
+        if (!movieId) { this.setState({ error: 'Geçersiz film ID' }); return; }
+        const movie = movies.find(m => String(m.id) === String(movieId));
+        movie
+            ? this.setState({ movie, error: null })
+            : this.setState({ error: 'Film bulunamadı', movie: null });
+    }
+
+    handleFormSubmit = (e) => {
+        e.preventDefault();
+        const data = serialize(e.target, { hash: true });
+        const updatedMovie = {
+            ...this.state.movie,
+            ...data,
+            rating: parseFloat(data.rating),
+            year: parseInt(data.year),
+        };
+        this.props.onUpdateMovie(updatedMovie);
+    }
+
+    render() {
+        const { movie, error } = this.state;
+
+        if (error) return (
+            <div className="error-state">
+                <p>❌ {error}</p>
+                <a href="/" className="btn btn-secondary">← Ana Sayfaya Dön</a>
+            </div>
+        );
+
+        if (!movie) return (
+            <div className="loading-state"><div className="spinner"></div></div>
+        );
+
+        return (
+            <div className="app-container">
+                <div className="back-button-wrapper">
+                    <a href="/" className="btn btn-secondary">← Geri Dön</a>
+                </div>
+
+                <div className="form-section" style={{ maxWidth: '700px', margin: '30px auto' }}>
+                    <div className="form-header">
+                        <h1 className="form-title">✏️ Filmi Düzenle</h1>
+                        <p className="form-subtitle">{movie.name}</p>
+                    </div>
+
+                    <form onSubmit={this.handleFormSubmit} className="edit-form">
+                        <div className="form-group-wrapper">
+                            <label className="form-label">🎞️ Filmin Adı</label>
+                            <input type="text" className="form-control" name="name"
+                                defaultValue={movie.name} placeholder="Film adını giriniz" required />
+                        </div>
+
+                        <div className="form-row-grid">
+                            <div className="form-group-wrapper">
+                                <label className="form-label">⭐ Puan (0-10)</label>
+                                <input type="number" className="form-control" name="rating"
+                                    defaultValue={movie.rating} step="0.1" min="0" max="10" required />
+                            </div>
+                            <div className="form-group-wrapper">
+                                <label className="form-label">📅 Yıl</label>
+                                <input type="number" className="form-control" name="year"
+                                    defaultValue={movie.year} required />
+                            </div>
+                        </div>
+
+                        <div className="form-group-wrapper">
+                            <label className="form-label">🎬 Tür</label>
+                            <select className="form-control" name="genre" defaultValue={movie.genre} required>
+                                <option value="">Seçiniz...</option>
+                                <option value="action">🔥 Aksiyon</option>
+                                <option value="drama">🎭 Drama</option>
+                                <option value="comedy">😂 Komedi</option>
+                                <option value="scifi">🚀 Sci-Fi</option>
+                                <option value="horror">👻 Korku</option>
+                                <option value="romance">💕 Romantik</option>
+                            </select>
+                        </div>
+
+                        <div className="form-group-wrapper">
+                            <label className="form-label">🖼️ Posterin URL Adresi</label>
+                            <input type="text" className="form-control" name="imageURL"
+                                defaultValue={movie.imageURL} placeholder="https://..." required />
+                            {movie.imageURL && (
+                                <div className="poster-preview">
+                                    <p className="preview-label">Ön İzleme:</p>
+                                    <img src={movie.imageURL} alt="poster" className="preview-image" />
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="form-group-wrapper">
+                            <label className="form-label">📝 Genel Bakış</label>
+                            <textarea className="form-control textarea-control" name="overview"
+                                rows="6" defaultValue={movie.overview}
+                                placeholder="Film hakkında açıklama..." required></textarea>
+                        </div>
+
+                        <div className="form-buttons">
+                            <button type="submit" className="btn btn-gradient-primary btn-lg">
+                                💾 Filmi Güncelle
+                            </button>
+                            <a href="/" className="btn btn-secondary btn-lg">✕ İptal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+}

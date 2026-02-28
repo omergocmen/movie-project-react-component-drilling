@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import "../App.css";
 
 import staticMovies from "../data/movies";
+import "../App.css";
+
+import staticMovies from "../data/movies";
 import MovieList from "./movieList";
 import Searchbar from "./searchbar";
 import EditMovie from "./editMovie";
@@ -10,6 +13,7 @@ import AddMovie from "./addMovie";
 
 import {
   BrowserRouter as Router,
+  Routes,
   Routes,
   Route,
   useParams,
@@ -241,6 +245,8 @@ export default class App extends Component {
           </Routes>
         </div>
       </Router>
+        </div >
+      </Router >
     );
   }
 }

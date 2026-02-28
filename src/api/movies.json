@@ -2,24 +2,48 @@
   "movies": [
     {
       "name": "Blitz 007",
-      "rating": "11",
-      "overview": "A tough, renegade cop with a gay sidekick is dispatched to take down a serial killer who has been targeting police officers. AÇIKLAMA AÇIKLAMA",
+      "rating": "8.5",
+      "genre": "action",
+      "year": 2023,
+      "overview": "A tough, renegade cop with a gay sidekick is dispatched to take down a serial killer who has been targeting police officers.",
       "imageURL": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/qCPMjT8Ld8tvs1zs7LY2jpKlRIK.jpg",
       "id": 1
     },
     {
       "name": "Hostage",
       "rating": "6.3",
+      "genre": "drama",
+      "year": 2022,
       "imageURL": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/4hne3v6jN4MlCnhSkxOW7YspJhr.jpg",
-      "overview": "When a mafia accountant is taken hostage on his beat, a police officer – wracked by guilt from a prior stint as a negotiator – must negotiate the standoff, even as his own family is held captive by the mob.",
+      "overview": "When a mafia accountant is taken hostage on his beat, a police officer must negotiate the standoff, even as his own family is held captive by the mob.",
       "id": 2
     },
     {
       "name": "Red Notice",
       "rating": "6.8",
+      "genre": "action",
+      "year": 2021,
       "imageURL": "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/kXWDfaKuw7dIdTDH7rK3BWoAZ53.jpg",
-      "overview": "Dünyanın en çok aranan sanat eseri hırsızı ve onun peşindeki FBI profil uzmanı, daima bir adım önde olan kurnaz bir soyguncuyu yakalamak için gönülsüzce suç ortağı olur.",
+      "overview": "The world's most wanted art thief and an FBI profiler must work together to catch a cunning criminal mastermind.",
       "id": 3
+    },
+    {
+      "name": "Inception",
+      "rating": "8.8",
+      "genre": "scifi",
+      "year": 2010,
+      "imageURL": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/9gk7adHYeDMNHysU-YxQELYIvju.jpg",
+      "overview": "A skilled thief who steals corporate secrets through dream-sharing technology must plant an idea into a CEO's mind instead of stealing one.",
+      "id": 4
+    },
+    {
+      "name": "The Dark Knight",
+      "rating": "9.0",
+      "genre": "action",
+      "year": 2008,
+      "imageURL": "https://image.tmdb.org/t/p/w600_and_h900_bestv2/qJ2tW6WMUDux911r6m7haI0xvwi.jpg",
+      "overview": "When the menace known as the Joker wreaks havoc on Gotham, Batman must accept one of the greatest psychological and physical tests.",
+      "id": 5
     }
   ]
 }
