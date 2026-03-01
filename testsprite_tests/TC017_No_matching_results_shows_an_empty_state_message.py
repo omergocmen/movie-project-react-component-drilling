@@ -30,28 +30,30 @@ async def run_test():
         page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
-        # -> Navigate to http://localhost:3000
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # -> Navigate to http://localhost:3001
+        await page.goto("http://localhost:3001", wait_until="commit", timeout=10000)
         
-        # -> Click the 'Düzenle' button on the first visible film card (index 98) to navigate to the edit page, then verify the URL and edit form visibility.
+        # -> Click the 'Gelişmiş Filtreler' (advanced filters) button to open the filter panel and expose the year filter input.
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[3]/div/div[2]/div[2]/a[2]').nth(0)
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div[2]/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Type '1800' into the year filter input to trigger filtering, wait for the UI to update, then verify the 'no matching films' empty state text is visible and that the movie list element is still present.
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div[3]/div/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('1800')
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        await frame.wait_for_load_state('load')
-        card = frame.locator('xpath=/html/body/div/div/div[3]/div/div[2]/div[2]/a[2]')
-        assert await card.is_visible(), 'Film kartı (Düzenle düğmesi) görünür olmalı'
-        # Verify we navigated to an edit page
-        assert "/edit/" in frame.url, f"Current URL does not contain /edit/: {frame.url}"
-        # Verify edit form heading is visible
-        form_heading = frame.locator('xpath=//h1[contains(normalize-space(.), "Filmi Düzenle") or contains(normalize-space(.), "✏️ Filmi Düzenle")]')
-        assert await form_heading.is_visible(), 'Film düzenleme formu görünür olmalı'
-        # Verify save button is visible
-        save_btn = frame.locator('xpath=//button[contains(normalize-space(.), "Filmi Güncelle") or contains(normalize-space(.), "💾 Filmi Güncelle") or contains(normalize-space(.), "Kaydet")]')
-        assert await save_btn.is_visible(), 'Kaydet butonu görünür olmalı'
+        # -> Assert that the empty-state text is present in the main container
+        text_elem = frame.locator('xpath=/html/body/div/div/div[1]')
+        content = await text_elem.inner_text()
+        assert ("Film Bulunamadı" in content) or ("no matching films" in content) or ("Arama kriterlerinize uygun film yok" in content), f"Expected empty-state text not found in /html/body/div/div/div[1]. Content: {content!r}"
+        # -> Verify the movie list element (main container) is visible
+        movie_list = frame.locator('xpath=/html/body/div/div/div[1]')
+        assert await movie_list.is_visible(), 'Movie list element (/html/body/div/div/div[1]) is not visible'
         await asyncio.sleep(5)
 
     finally:

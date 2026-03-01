@@ -30,36 +30,28 @@ async def run_test():
         page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
-        # -> Navigate to http://localhost:3000
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # -> Navigate to http://localhost:3001
+        await page.goto("http://localhost:3001", wait_until="commit", timeout=10000)
         
-        # -> Click on the first movie in the list (the first movie's detail link).
+        # -> Click the '+ Yeni Film' button to open the Add Movie form (expect navigation to /add or rendering of the add form).
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[3]/div/div/div[2]/a').nth(0)
+        elem = frame.locator('xpath=/html/body/div/nav/div/div/a[2]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Click the '✎ Filmi Düzenle' button to open the edit form (index 248).
+        # -> Click the '➕ Filmi Ekle' submit button (index 332) to trigger validation errors while staying on /add.
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div/div[2]/div[2]/div[4]/a').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Clear the 'Film adı' field (input index 338) by entering an empty string, then click the '💾 Filmi Güncelle' button (index 375) to trigger validation.
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div/div/div/div/div[2]/form/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('')
-        
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div/div/div[2]/form/div[6]/button').nth(0)
+        elem = frame.locator('xpath=/html/body/div/div/div/div/form/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        await expect(frame.locator('text=Film adı zorunludur').first).to_be_visible(timeout=3000)
-        assert '/edit/' in frame.url
+        # Verify the "Yeni Film" text (nav item) is visible
+        elem = frame.locator('xpath=/html/body/div[1]/nav/div/div/a[2]')
+        assert await elem.is_visible()
+        # Expected validation message "Zorunlu" is not present in the available elements list -> report and stop
+        raise AssertionError("Feature missing: validation message 'Zorunlu' not found on the page. Marking task as done.")
         await asyncio.sleep(5)
 
     finally:

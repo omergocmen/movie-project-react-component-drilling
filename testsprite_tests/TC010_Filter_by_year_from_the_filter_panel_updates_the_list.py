@@ -30,14 +30,26 @@ async def run_test():
         page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
-        # -> Navigate to http://localhost:3000
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # -> Navigate to http://localhost:3001
+        await page.goto("http://localhost:3001", wait_until="commit", timeout=10000)
+        
+        # -> Click the 'Gelişmiş Filtreler' button to open the filter panel so the year filter can be located.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div[2]/button').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Type '2010' into the 'Yapım Yılı' (year) input field to filter the movie list (use input element index 244).
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div[3]/div/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('2010')
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        await expect(frame.locator('text=Loading').first).to_be_visible(timeout=3000)
-        await expect(frame.locator('text=Film listesi').first).not_to_be_visible(timeout=3000)
-        await expect(frame.locator('text=Film listesi').first).to_be_visible(timeout=3000)
+        await expect(frame.locator('xpath=/html/body/div/div/div/form/div[3]/div/div/input').first).to_be_visible(timeout=3000)
+        await expect(frame.locator('xpath=//div[contains(@class,"movie-list") or contains(@class,"movies") or @id="movie-list"]').first).to_be_visible(timeout=3000)
+        await expect(frame.locator('text=2010').first).to_be_visible(timeout=3000)
         await asyncio.sleep(5)
 
     finally:

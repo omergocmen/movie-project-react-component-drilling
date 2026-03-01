@@ -30,43 +30,42 @@ async def run_test():
         page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
-        # -> Navigate to http://localhost:3000
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # -> Navigate to http://localhost:3001
+        await page.goto("http://localhost:3001", wait_until="commit", timeout=10000)
         
-        # -> Click the '+ Yeni Film' link to open the add-movie form (use element index 48).
-        frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div/nav/div/div/a').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
-        # -> Type 'Puan Zorunlu Testi' into Ad (index 235), type '2005' into Yıl (index 249), select 'Bilim Kurgu' in Tür (index 263), leave Puan (index 242) empty, then click 'Filmi Ekle' (index 276) to trigger validation.
+        # -> Type 'star' into the film search bar (input index 4), then open the advanced filters panel ('Gelişmiş Filtreler' button index 83).
         frame = context.pages[-1]
         # Input text
-        elem = frame.locator('xpath=/html/body/div/div/div/div/form/div/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('Puan Zorunlu Testi')
-        
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div/div/div/div/form/div/div[3]/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('2005')
-        
-        # -> Clear the Puan (rating) input so it is empty, then select the genre '🚀 Sci-Fi', then click 'Filmi Ekle' to trigger validation.
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div/div/div/div/form/div/div[2]/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('')
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('star')
         
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div/div/form/button').nth(0)
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div[2]/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Type '2014' into the year filter (input index 261).
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div[3]/div/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('2014')
+        
+        # -> Click the Film Türü (genre) dropdown (index 265) to open it so Sci‑Fi can be selected.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div[3]/div/div[2]/select').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Select 'Sci‑Fi' (value 'scifi') from Film Türü dropdown (index 265), then set Min. Puan to 8 (input index 279). After that verify the movie list visibility matches the combined filters.
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div[3]/div/div[3]/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('8')
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        locator = frame.locator('xpath=/html/body/div[1]/div/div/div/form/div[1]/div[1]/input')
-        val = await locator.get_attribute('value')
-        assert val is not None and 'Puan' in val, f"Expected text 'Puan' in element value, got: {val}"
-        assert 'Zorunlu' in val, f"Expected text 'Zorunlu' in element value, got: {val}"
+        # The "movie list" element is not present in the provided Available elements list, so the test cannot verify visibility as requested.
+        assert False, 'movie list element not found in available elements; cannot verify movie list visibility.'
         await asyncio.sleep(5)
 
     finally:

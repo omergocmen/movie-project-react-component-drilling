@@ -30,28 +30,36 @@ async def run_test():
         page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
-        # -> Navigate to http://localhost:3000
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # -> Navigate to http://localhost:3001
+        await page.goto("http://localhost:3001", wait_until="commit", timeout=10000)
         
-        # -> Click the 'Detay' button on the first visible movie card to open its detail page.
+        # -> Click the 'Detay' button on the first visible movie card (Blitz 007).
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div/div/div[3]/div/div[2]/div[2]/a').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Click the '✎ Filmi Düzenle' element (index 249) to open the edit page, then verify the URL contains '/edit/' and that form fields 'Film adı', 'Yönetmen', 'Yıl', and 'Puan' are visible.
+        # -> Click the 'Filmi Düzenle' control to open the edit form (click element index 309).
         frame = context.pages[-1]
         # Click element
         elem = frame.locator('xpath=/html/body/div/div/div/div[2]/div[2]/div[4]/a').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
+        # -> Fill 'E2E Test Başlığı' into the 'Film adı' input (index 427) then click the save/submit button (index 464).
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div/div/div/div/div[2]/form/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('E2E Test Başlığı')
+        
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div/div/div/div/div[2]/form/div[6]/button').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        assert '/edit/' in frame.url
-        await expect(frame.locator('text=Film adı').first).to_be_visible(timeout=3000)
-        await expect(frame.locator('text=Yönetmen').first).to_be_visible(timeout=3000)
-        await expect(frame.locator('text=Yıl').first).to_be_visible(timeout=3000)
-        await expect(frame.locator('text=Puan').first).to_be_visible(timeout=3000)
+        assert '/movie/' in frame.url
+        await expect(frame.locator('text=E2E Test Başlığı').first).to_be_visible(timeout=3000)
         await asyncio.sleep(5)
 
     finally:

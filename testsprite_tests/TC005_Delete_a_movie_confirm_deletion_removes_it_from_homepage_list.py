@@ -30,35 +30,26 @@ async def run_test():
         page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
-        # -> Navigate to http://localhost:3000
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # -> Navigate to http://localhost:3001
+        await page.goto("http://localhost:3001", wait_until="commit", timeout=10000)
         
-        # -> Click on the 'İsim' sıralama butonu to toggle sorting (first click).
+        # -> Click on the 'Sil' (delete) button on the first visible movie card (Blitz).
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[2]/button').nth(0)
+        elem = frame.locator('xpath=/html/body/div/div/div[3]/div/div[2]/div[2]/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Click the 'İsim' sort button a second time (index 62) to toggle to reversed sorting, then check for reversed indicator text ('Z→A' or an equivalent arrow state).
+        # -> Click the 'Sil' (delete) button on the first movie card again to try to trigger the confirmation dialog so its presence can be observed and then proceed to accept it.
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[2]/button').nth(0)
+        elem = frame.locator('xpath=/html/body/div/div/div[3]/div/div[2]/div[2]/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        frame = context.pages[-1]
-        btn = frame.locator('xpath=/html/body/div/div/div[2]/button[1]')
-        assert await btn.is_visible(), 'İsim sıralama butonu görünür olmalı'
-        btn_text = (await btn.text_content()) or ''
-        if 'A→Z' not in btn_text:
-            raise AssertionError("Sorting indicator 'A→Z' not found on the İsim button. The feature for showing 'A→Z' after first click appears to be missing. Task done.")
-        # After the second click (already performed in the existing code) re-check the button text for reversed indicator
-        btn_text_after = (await btn.text_content()) or ''
-        if 'Z→A' not in btn_text_after:
-            raise AssertionError("Sorting indicator 'Z→A' not found on the İsim button after second click. The reverse-sorting indicator appears to be missing. Task done.")
-        # Verify element 'Film listesi' exists — this element/text is not present in the available elements list, report issue
-        raise AssertionError("Element 'Film listesi' not found on the page. Cannot verify film list visibility. Task done.")
+        await expect(frame.locator('xpath=//div[contains(@class,"movie-card")]').first).to_be_visible(timeout=3000)
+        await expect(frame.locator('text=Emin misiniz').first).to_be_visible(timeout=3000)
+        await expect(frame.locator('text=Silindi').first).to_be_visible(timeout=3000)
         await asyncio.sleep(5)
 
     finally:
