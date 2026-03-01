@@ -1,0 +1,85 @@
+version: "2"
+type: frontend
+tech_stack:
+  language: JavaScript
+  framework: React
+  ui_library: "None (custom CSS via App.css)"
+  other:
+    - react-router-dom
+    - localStorage
+routes:
+  - path: /
+    file: src/components/App.js
+    auth_required: false
+    description: Ana film listesi, filtreleme ve sıralama sayfası
+  - path: /add
+    file: src/components/addMovie.js
+    auth_required: false
+    description: Yeni film ekleme formu
+  - path: /edit/:id
+    file: src/components/editMovie.js
+    auth_required: false
+    description: Var olan filmleri düzenleme sayfası
+  - path: /movie/:id
+    file: src/components/movieDetail.js
+    auth_required: false
+    description: Seçili filmin detay sayfası
+  - path: /watchlist
+    file: src/components/watchlist.js
+    auth_required: false
+    description: İzleme listesine eklenmiş filmler sayfası
+features:
+  - name: Movie CRUD ve Watchlist Yönetimi
+    description: Kullanıcılar film ekleyip güncelleyebilir, silebilir ve filmleri izleme listesine ekleyip izledi olarak işaretleyebilir.
+    files:
+      - src/components/App.js
+      - src/components/addMovie.js
+      - src/components/editMovie.js
+      - src/components/movieList.js
+      - src/components/movieDetail.js
+      - src/components/watchlist.js
+    entry_route: /
+    user_interactions:
+      - Ana sayfayı aç ve film listesini gör
+      - Yeni Film ekleme butonuna tıkla ve form alanlarını doldur
+      - Kaydet butonuna basarak yeni filmi ekle
+      - Film kartındaki Düzenle butonuna tıkla ve filmi güncelle
+      - Film kartındaki Sil veya detay sayfasındaki silme aksiyonuyla filmi sil
+      - Film kartındaki kalp butonuna basarak filme watchlist ekle veya çıkar
+      - Watchlist sayfasında "İzledim" butonuna tıklayarak filmi izlenmiş olarak işaretle
+    api_calls: []
+    auth_required: false
+  - name: Film Filtreleme ve Sıralama
+    description: Kullanıcılar film listesini isim araması, yıl, tür ve minimum puan ile filtreleyip farklı kriterlere göre sıralayabilir.
+    files:
+      - src/components/App.js
+      - src/components/searchbar.js
+      - src/components/movieList.js
+    entry_route: /
+    user_interactions:
+      - Arama çubuğuna film adı yazarak listeyi daralt
+      - Yıl filtresi ile belirli bir yıla ait filmleri seç
+      - Tür filtresi ile Aksiyon, Drama, Komedi, Sci-Fi, Korku veya Romantik türlerini seç
+      - Minimum puan filtresi ile belirli bir puanın üzerindeki filmleri göster
+      - Sıralama butonlarına tıklayarak isme, puana veya yıla göre artan/azalan sıralama yap
+    api_calls: []
+    auth_required: false
+  - name: Film Detay ve Navigasyon
+    description: Kullanıcılar bir filmi detaylı olarak görüntüleyebilir, buradan düzenleme veya silme işlemleri yapabilir ve diğer sayfalara dönebilir.
+    files:
+      - src/components/movieDetail.js
+      - src/components/editMovie.js
+      - src/components/watchlist.js
+    entry_route: /movie/:id
+    user_interactions:
+      - Ana sayfadan veya izleme listesinden bir film kartındaki Detay butonuna tıkla
+      - Detay sayfasında filmin özetini, türünü, yılını ve puanını incele
+      - Detay sayfasından düzenleme sayfasına veya önceki sayfaya geri dön
+      - Detay sayfasındaki silme aksiyonunu kullanarak filmi sil
+    api_calls: []
+    auth_required: false
+known_limitations:
+  - issue: Uygulama gerçek bir backend API ile entegre değil, tüm veri localStorage ve statik JSON üzerinden yönetiliyor.
+    location: src/components/App.js
+    impact: Film verileri yalnızca tarayıcıya özeldir ve cihazlar arası paylaşılmaz; tarayıcı verileri temizlendiğinde tüm veriler sıfırlanır.
+

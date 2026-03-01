@@ -1,0 +1,904 @@
+[
+  {
+    "id": "TC001",
+    "title": "Add a new movie from homepage and verify it appears in the list",
+    "description": "Verifies a user can add a new movie and see it listed on the homepage with a visible success indicator.",
+    "category": "Film CRUD ve Watchlist Yönetimi",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Yeni Film ekle\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/add\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"E2E Test Movie\" into \"Title\" field"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2024\" into \"Year\" field"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Action\" from \"Genre\" dropdown"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Kaydet\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Add movie form validation: required fields empty blocks save",
+    "description": "Verifies the add movie form shows validation errors and does not navigate away when required fields are missing.",
+    "category": "Film CRUD ve Watchlist Yönetimi",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /add"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Yeni Film\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Kaydet\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Zorunlu\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/add\""
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Edit an existing movie from homepage and verify updated info is shown",
+    "description": "Verifies a user can open edit from a movie card, save changes, and see updated information reflected in the UI.",
+    "category": "Film CRUD ve Watchlist Yönetimi",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"a movie card\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Düzenle\" button on the first visible movie card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/edit/\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"Updated Title\" into \"Title\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Kaydet\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Updated Title\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Edit validation: invalid rating blocks save and shows error",
+    "description": "Verifies the edit form prevents saving when rating is outside the 0-10 range and shows a visible validation message.",
+    "category": "Film CRUD ve Watchlist Yönetimi",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Düzenle\" button on the first visible movie card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/edit/\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"15\" into \"Rating\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Kaydet\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"0-10\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/edit/\""
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Delete a movie: confirm deletion removes it from homepage list",
+    "description": "Verifies a user can delete a movie after confirming and sees it removed with a visible success indicator.",
+    "category": "Film CRUD ve Watchlist Yönetimi",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"a movie card\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sil\" button on the first visible movie card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Emin misiniz\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Onayla\" button in the confirmation dialog"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Silindi\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Delete a movie: cancel deletion keeps movie in homepage list",
+    "description": "Verifies cancelling the delete confirmation leaves the movie visible in the list.",
+    "category": "Film CRUD ve Watchlist Yönetimi",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"a movie card\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Sil\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sil\" button on the first visible movie card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Cancel\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Cancel\" button in the confirmation dialog"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"a movie card\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Add to watchlist from homepage and mark as watched in watchlist",
+    "description": "Verifies a movie can be added to watchlist from the homepage and then marked as watched from the watchlist page.",
+    "category": "Film CRUD ve Watchlist Yönetimi",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"a movie card\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"watchlist (heart)\" icon on the first visible movie card"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Watchlist\" navigation link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/watchlist\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"a watchlist item\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"İzledim\" button on the first visible watchlist item"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"İzlendi\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Watchlist empty state is shown when no movies are in watchlist",
+    "description": "Verifies the watchlist page shows a clear empty-state message when there are no items.",
+    "category": "Film CRUD ve Watchlist Yönetimi",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /watchlist"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/watchlist\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Watchlist\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Boş\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Search by film name narrows the list in real time",
+    "description": "Verifies typing a title in the search bar filters the visible movie list to matching titles.",
+    "category": "Film Filtreleme ve Sıralama",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"film search bar\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"a\" into \"film search bar\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"av\" into \"film search bar\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Filter by year from the filter panel updates the list",
+    "description": "Verifies selecting a year filter shows only movies from that year.",
+    "category": "Film Filtreleme ve Sıralama",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Filter\" or \"Filters\" to open the filter panel"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"year filter\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2010\" into \"year filter\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"2010\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Filter by genre dropdown updates the list to the selected genre",
+    "description": "Verifies choosing a genre from the dropdown filters the movie list accordingly.",
+    "category": "Film Filtreleme ve Sıralama",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Filter\" or \"Filters\" to open the filter panel"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"genre dropdown\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Select \"Drama\" from \"genre dropdown\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Drama\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Minimum rating filter shows only movies with rating >= selected minimum",
+    "description": "Verifies setting a minimum rating filters the list to higher-rated movies.",
+    "category": "Film Filtreleme ve Sıralama",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Filter\" or \"Filters\" to open the filter panel"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"minimum rating filter\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Type \"7\" into \"minimum rating filter\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"7\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Apply multiple filters (name + year + genre + min rating) uses AND logic",
+    "description": "Verifies multiple active filters combine with AND logic to narrow results.",
+    "category": "Film Filtreleme ve Sıralama",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Type \"star\" into \"film search bar\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Filter\" or \"Filters\" to open the filter panel"
+      },
+      {
+        "type": "action",
+        "description": "Type \"2014\" into \"year filter\""
+      },
+      {
+        "type": "action",
+        "description": "Select \"Sci-Fi\" from \"genre dropdown\""
+      },
+      {
+        "type": "action",
+        "description": "Type \"8\" into \"minimum rating filter\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Sort by Name toggles between ascending and descending",
+    "description": "Verifies the Name sort control sorts the list and toggles direction on repeated clicks.",
+    "category": "Film Filtreleme ve Sıralama",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Sort by Name\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sort by Name\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sort by Name\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Sort by Rating sorts the list by rating (asc/desc)",
+    "description": "Verifies the Rating sort control changes the order of movies based on rating.",
+    "category": "Film Filtreleme ve Sıralama",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Sort by Rating\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sort by Rating\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sort by Rating\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Sort by Year sorts the list by year (asc/desc)",
+    "description": "Verifies the Year sort control changes the order of movies based on release year.",
+    "category": "Film Filtreleme ve Sıralama",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Sort by Year\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sort by Year\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sort by Year\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "No matching results shows an empty state message",
+    "description": "Verifies that when filters yield no results, the app shows a clear 'no matching films' empty state.",
+    "category": "Film Filtreleme ve Sıralama",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Filter\" or \"Filters\" to open the filter panel"
+      },
+      {
+        "type": "action",
+        "description": "Type \"1800\" into \"year filter\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"no matching films\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"movie list\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Film kartından Detay sayfasına gitme ve film alanlarını görüntüleme",
+    "description": "Ana listeden seçilen bir filmin detay sayfasına gidildiğinde başlık, özet, tür, yıl ve puan rozeti görünür olmalıdır.",
+    "category": "Film Detay ve Navigasyon",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Film listesi / film kartları\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Detay\" button on the first visible movie card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/movie/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Film başlığı\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Özet\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Tür\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Yıl\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Detay sayfasında puan rozetinin görünmesi (renk kodlu rozet)",
+    "description": "Detay sayfasında puan bilgisi rozet olarak görünür olmalıdır (renk doğrulaması yapılmadan rozetin varlığı doğrulanır).",
+    "category": "Film Detay ve Navigasyon",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Detay\" button on the first visible movie card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/movie/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Puan rozeti\" is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Puan\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Detaydan Düzenle’ye gidip film bilgilerini güncelleme ve detayda doğrulama",
+    "description": "Detay sayfasından düzenlemeye gidilip değişiklikler kaydedildiğinde detay sayfası güncellenmiş bilgileri göstermelidir.",
+    "category": "Film Detay ve Navigasyon",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Detay\" button on the first visible movie card"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Düzenle\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/edit/\""
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Güncellenmiş Film Başlığı\" into \"Film adı\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Kaydet\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/movie/\""
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Detaydan düzenleme kaydedildikten sonra güncellenmiş başlığın görünmesi",
+    "description": "Kaydet sonrası detay sayfasında yeni film başlığı görünür olmalıdır.",
+    "category": "Film Detay ve Navigasyon",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Detay\" button on the first visible movie card"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Düzenle\" button"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"E2E Test Başlığı\" into \"Film adı\" field"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Kaydet\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/movie/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"E2E Test Başlığı\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Detay sayfasından Sil ile filmi silme ve ana listeye dönme",
+    "description": "Detay sayfasında film silinince onay sonrası ana listeye dönülmeli ve başarı mesajı görünmelidir.",
+    "category": "Film Detay ve Navigasyon",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Detay\" button on the first visible movie card"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sil\" button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Silme onay penceresi\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Onayla\" button in the deletion confirmation dialog"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Başarı\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC023",
+    "title": "Silinen filmin ana listede artık görünmemesi",
+    "description": "Silme işlemi tamamlandıktan sonra aynı filmin tekrar görünmemesi beklenir (liste güncellendi).",
+    "category": "Film Detay ve Navigasyon",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Detay\" button on the first visible movie card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Film başlığı\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Sil\" button"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Onayla\" button in the deletion confirmation dialog"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Film bulunamadı\" is not visible"
+      }
+    ]
+  },
+  {
+    "id": "TC024",
+    "title": "Detay sayfasından Geri Dön ile ana sayfaya dönme",
+    "description": "Detay sayfasındaki Geri Dön bağlantısı kullanıcıyı önceki sayfaya (ana liste) döndürmelidir.",
+    "category": "Film Detay ve Navigasyon",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Detay\" button on the first visible movie card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/movie/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Geri Dön\" link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"Film listesi / film kartları\" is visible"
+      }
+    ]
+  },
+  {
+    "id": "TC025",
+    "title": "İzleme listesinden detaya gidip Geri Dön ile watchlist’e dönme",
+    "description": "Watchlist üzerinden detay sayfasına gidildiğinde Geri Dön, kullanıcıyı watchlist sayfasına geri götürmelidir.",
+    "category": "Film Detay ve Navigasyon",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /watchlist"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify element \"İzleme listesi\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Detay\" button on the first visible watchlist movie card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/movie/\""
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Geri Dön\" link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/watchlist\""
+      }
+    ]
+  },
+  {
+    "id": "TC026",
+    "title": "Mevcut olmayan film id için Film bulunamadı mesajı ve geri dönüş",
+    "description": "Geçersiz bir film detay sayfasında hata/boş durum mesajı görünmeli ve Geri Dön ile ana sayfaya dönülebilmelidir.",
+    "category": "Film Detay ve Navigasyon",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Detay\" button on the first visible movie card"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/movie/\""
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /movie/999999"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify text \"Film bulunamadı\" is visible"
+      },
+      {
+        "type": "action",
+        "description": "Click on \"Geri Dön\" link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify URL contains \"/\""
+      }
+    ]
+  }
+]
