@@ -915,6 +915,352 @@ body {
 }
 
 /* ============================================================
+   WATCHLIST PAGE (LISTEM)
+   ============================================================ */
+
+.watchlist-page {
+  max-width: 1400px;
+  margin: 32px auto 80px;
+  padding: 0 28px 40px;
+  color: var(--text-primary);
+  animation: fadeIn 0.45s ease;
+}
+
+.watchlist-header {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.watchlist-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.watchlist-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  margin-left: 10px;
+  background: linear-gradient(90deg,
+      rgba(232, 184, 109, 0.4),
+      transparent 60%);
+  opacity: 0.7;
+}
+
+.watchlist-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(232, 184, 109, 0.09));
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(16px);
+}
+
+.wl-stat {
+  display: flex;
+  flex-direction: column;
+  min-width: 70px;
+}
+
+.wl-stat-number {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--gold-light);
+}
+
+.wl-stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--text-muted);
+}
+
+.wl-stat-divider {
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.22) 50%,
+      transparent 100%);
+  opacity: 0.7;
+}
+
+/* Sections */
+.wl-section {
+  margin-top: 32px;
+}
+
+.wl-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.wl-section-icon {
+  font-size: 20px;
+}
+
+.wl-section-count {
+  margin-left: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  background: rgba(232, 184, 109, 0.12);
+  color: var(--gold-light);
+  border: 1px solid rgba(232, 184, 109, 0.35);
+}
+
+.wl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+}
+
+/* Cards */
+.wl-card {
+  background: linear-gradient(145deg,
+      rgba(11, 16, 31, 0.98),
+      rgba(10, 14, 28, 0.96));
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  gap: 16px;
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-slow);
+  animation: cardReveal 0.4s ease both;
+}
+
+.wl-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg,
+      transparent 40%,
+      rgba(232, 184, 109, 0.18) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.wl-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(232, 184, 109, 0.24);
+}
+
+.wl-card:hover::before {
+  opacity: 1;
+}
+
+.wl-card-watched {
+  background: linear-gradient(145deg,
+      rgba(11, 24, 18, 0.98),
+      rgba(9, 18, 14, 0.96));
+  border-color: rgba(46, 213, 115, 0.35);
+}
+
+.wl-card-poster {
+  position: relative;
+  flex-shrink: 0;
+  width: 92px;
+  height: 138px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: radial-gradient(circle at 30% 0,
+      rgba(232, 184, 109, 0.3),
+      rgba(0, 0, 0, 0.9));
+}
+
+.wl-card-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+
+.wl-card:hover .wl-card-poster img {
+  transform: scale(1.05);
+}
+
+.wl-watched-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  background: radial-gradient(circle at 50% 10%,
+      rgba(46, 213, 115, 0.18),
+      rgba(5, 8, 16, 0.88));
+  color: var(--green);
+}
+
+.wl-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.wl-card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.wl-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.wl-badge-rating,
+.wl-badge-year,
+.wl-badge-genre {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.wl-badge-rating {
+  background: rgba(232, 184, 109, 0.18);
+  border: 1px solid rgba(232, 184, 109, 0.4);
+  color: var(--gold-light);
+}
+
+.wl-badge-year {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--text-secondary);
+}
+
+.wl-badge-genre {
+  background: rgba(108, 99, 255, 0.12);
+  border: 1px solid rgba(108, 99, 255, 0.32);
+  color: var(--accent-light);
+}
+
+.wl-card-overview {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+}
+
+.wl-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.wl-card-actions .btn {
+  flex: 1;
+  min-width: 90px;
+  padding-inline: 10px;
+}
+
+.btn-watched {
+  background: rgba(46, 213, 115, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(46, 213, 115, 0.28);
+}
+
+.btn-watched:hover {
+  background: rgba(46, 213, 115, 0.2);
+  box-shadow: 0 4px 18px var(--green-glow);
+}
+
+.btn-watched-active {
+  background: linear-gradient(135deg, var(--green), #41f28a);
+  color: #02130a;
+  border: 1px solid rgba(46, 213, 115, 0.6);
+  box-shadow: 0 4px 18px var(--green-glow);
+}
+
+.btn-watched-active:hover {
+  filter: brightness(1.05);
+}
+
+.btn-outline-remove {
+  background: transparent;
+  color: #ff8591;
+  border: 1px solid rgba(255, 71, 87, 0.55);
+}
+
+.btn-outline-remove:hover {
+  background: rgba(255, 71, 87, 0.18);
+  box-shadow: 0 4px 18px var(--red-glow);
+}
+
+/* Watchlist nav button in header */
+.btn-watchlist-nav {
+  background: rgba(232, 184, 109, 0.06);
+  border: 1px solid rgba(232, 184, 109, 0.36);
+  color: var(--gold-light);
+  box-shadow: 0 4px 18px var(--gold-glow);
+}
+
+.btn-watchlist-nav:hover {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: #1a1208;
+}
+
+.watchlist-nav-badge {
+  margin-left: 6px;
+  min-width: 20px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(232, 184, 109, 0.2);
+  color: var(--gold-light);
+}
+
+/* ============================================================
    MOVIE CARD
    ============================================================ */
 
