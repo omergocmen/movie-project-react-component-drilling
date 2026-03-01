@@ -30,6 +30,7 @@ function EditMovieWrapper({ movies, onUpdateMovie }) {
 
 /* ── localStorage persistence ── */
 const STORAGE_KEY = "cinehub_movies";
+const THEME_KEY = "cinehub_theme";
 
 function loadMovies() {
   try {
@@ -45,18 +46,46 @@ function saveMovies(movies) {
   } catch (e) { /* ignore */ }
 }
 
+function loadTheme() {
+  try {
+    return localStorage.getItem(THEME_KEY) === 'light';
+  } catch (e) { return false; }
+}
+
+function saveTheme(isDark) {
+  try {
+    localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+  } catch (e) { /* ignore */ }
+}
+
 /* ── App ── */
 export default class App extends Component {
   constructor() {
     super();
+    const isDarkMode = !loadTheme(); // loadTheme returns true if light
     this.state = {
       movies: loadMovies(),
       searchQuery: "",
       sortBy: "name",
       sortOrder: "asc",
-      filters: { year: '', genre: '', rating: '' }
+      filters: { year: '', genre: '', rating: '' },
+      isDarkMode,
     };
   }
+
+  componentDidMount() {
+    const { isDarkMode } = this.state;
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+  }
+
+  toggleTheme = () => {
+    this.setState(prev => {
+      const isDarkMode = !prev.isDarkMode;
+      document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+      saveTheme(isDarkMode);
+      return { isDarkMode };
+    });
+  };
 
   searchMovie = (event) => {
     this.setState({ searchQuery: event.target.value });
@@ -150,6 +179,18 @@ export default class App extends Component {
               </div>
             </a>
             <div className="navbar-actions">
+              <button
+                className="theme-toggle"
+                onClick={this.toggleTheme}
+                title={this.state.isDarkMode ? 'Açık temaya geç' : 'Koyu temaya geç'}
+                aria-label="Tema değiştir"
+              >
+                <div className="theme-toggle-track">
+                  <div className="theme-toggle-thumb">
+                    {this.state.isDarkMode ? '🌙' : '☀️'}
+                  </div>
+                </div>
+              </button>
               <a href="/add" className="btn btn-success" style={{ textDecoration: 'none' }}>
                 ＋ Yeni Film
               </a>
