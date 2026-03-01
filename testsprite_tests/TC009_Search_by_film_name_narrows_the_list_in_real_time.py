@@ -30,25 +30,30 @@ async def run_test():
         page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
-        # -> Navigate to http://localhost:3000
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # -> Navigate to http://localhost:3001
+        await page.goto("http://localhost:3001", wait_until="commit", timeout=10000)
         
-        # -> Click the 'Detay' button on the first visible movie card to open its detail page.
+        # -> Type 'a' into the film search bar to filter the movie list (first typing step).
         frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[3]/div/div/div[2]/a').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        # Input text
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('a')
+        
+        # -> Type 'av' into the film search bar to further filter the movie list (make input value 'av')
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('av')
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        # -> Wait a moment for navigation/DOM updates
-        await page.wait_for_timeout(1000)
-        # -> Assert URL contains /movie/
-        assert "/movie/" in frame.url
-        # -> Verify text "Puan" is visible on the detail page (locate any element containing the word 'Puan')
-        el_puan = frame.locator('xpath=//*[contains(text(), "Puan")]')
-        assert await el_puan.count() > 0, 'No element containing the text "Puan" was found on the page'
-        assert await el_puan.first.is_visible(), 'Expected text "Puan" to be visible on the detail page'
+        # Verify the film search bar is visible
+        search = frame.locator('xpath=/html/body/div/div/div[1]/form/div[1]/div/input')
+        assert await search.is_visible(), 'Expected film search bar to be visible'
+        
+        # The page does not expose any element corresponding to the movie list in the provided Available elements.
+        # Report the missing feature and stop the test as per the test plan.
+        raise AssertionError('Movie list element not found in Available elements; feature appears to be missing. Test done.')
         await asyncio.sleep(5)
 
     finally:

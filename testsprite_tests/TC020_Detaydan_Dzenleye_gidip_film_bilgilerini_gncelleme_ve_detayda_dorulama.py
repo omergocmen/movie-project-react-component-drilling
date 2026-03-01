@@ -30,33 +30,42 @@ async def run_test():
         page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
-        # -> Navigate to http://localhost:3000
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # -> Navigate to http://localhost:3001
+        await page.goto("http://localhost:3001", wait_until="commit", timeout=10000)
         
-        # -> Click the '⚙ Gelişmiş Filtreler' button to open the advanced filters panel.
+        # -> Click on the 'Detay' button on the first visible movie card (Blitz 007).
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div/form/div[2]/button').nth(0)
+        elem = frame.locator('xpath=/html/body/div/div/div[3]/div/div[2]/div[2]/a').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Input '2019' into the 'Yapım Yılı' field (index 211), select 'Komedi' in the 'Film Türü' dropdown (index 215), toggle the filters closed and reopened, then verify that '2019' and 'Komedi' are visible in the reopened panel.
+        # -> Click the 'Filmi Düzenle' (Düzenle) link/button on the movie detail page (interactive element index 309).
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div/div/div/div[2]/div[2]/div[4]/a').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Fill 'Güncellenmiş Film Başlığı' into the 'Film adı' field (index 427) and click the '💾 Filmi Güncelle' button (index 464). After the click, verify the app redirects to the movie detail page and that the title is updated.
         frame = context.pages[-1]
         # Input text
-        elem = frame.locator('xpath=/html/body/div/div/div/form/div[3]/div/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('2019')
+        elem = frame.locator('xpath=/html/body/div/div/div/div/div[2]/form/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('Güncellenmiş Film Başlığı')
         
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div').nth(0)
+        elem = frame.locator('xpath=/html/body/div/div/div/div/div[2]/form/div[6]/button').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Click the 'Detay' link for the updated movie on the home list (open its detail page) and verify the detail page shows the updated title and the URL contains '/movie/'.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div/div/div[3]/div/div/div[2]/a').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        elem = frame.locator('xpath=/html/body/div/div/div[1]/form/div[3]/div/div[1]/input')
-        assert await elem.input_value() == '2019'
-        sel = frame.locator('xpath=/html/body/div/div/div[1]/form/div[3]/div/div[2]/select')
-        sel_text = await sel.text_content()
-        assert 'Komedi' in (sel_text or '')
+        assert '/edit/' in frame.url
+        assert '/movie/' in frame.url
         await asyncio.sleep(5)
 
     finally:

@@ -2,17 +2,17 @@
   "status": "commited",
   "type": "frontend",
   "scope": "codebase",
-  "localEndpoint": "http://localhost:3000",
+  "localEndpoint": "http://localhost:3001",
   "executionArgs": {
     "projectName": "movie-project-react-component-drilling",
     "projectPath": "c:\\Users\\omer_\\Desktop\\movie-project-react-component-drilling",
     "testIds": [],
     "additionalInstruction": "",
-    "serverMode": "production",
+    "serverMode": "development",
     "envs": {
       "API_KEY": "sk-user-vMUZ6I8ivqZvxjP4AE4alBItC-_BK9geMqfMDSHIvzKBGexE5lLtSikYlHC_aoOv32nWg758wK4PCmwTBMWj1MDOBDs5OqZciIFu3ilBOlVMaJlcb3qHt_dq9D4BzNQVwR4"
     }
   },
-  "serverPort": 49822,
-  "proxy": "http://f0fe0dd7-e69b-4575-add2-222e5cdbfc3e:CSjVZ8mxsiBC5xelWaXnkRMXz8TSy0Zg@tun.testsprite.com:8080"
+  "serverPort": 49536,
+  "proxy": "http://ddefd60d-4933-43a7-b629-7368347f7d4b:dYGR1nBk4sHQZUxDFzQpndVuBodA4N5d@tun.testsprite.com:8080"
 }

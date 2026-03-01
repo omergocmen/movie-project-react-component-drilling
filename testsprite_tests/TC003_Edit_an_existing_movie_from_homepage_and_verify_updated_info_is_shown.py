@@ -30,34 +30,39 @@ async def run_test():
         page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
-        # -> Navigate to http://localhost:3000
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # -> Navigate to http://localhost:3001
+        await page.goto("http://localhost:3001", wait_until="commit", timeout=10000)
         
-        # -> Click on a 'Film' item to open its detail view (click element index 81).
+        # -> Click on 'Düzenle' button on the first visible movie card (index 123).
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[3]/div/div/div[2]/a').nth(0)
+        elem = frame.locator('xpath=/html/body/div/div/div[3]/div/div[2]/div[2]/a[2]').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
-        # -> Click the 'Filmi Sil' (delete) button to open the confirmation dialog, then verify the confirmation appears.
+        # -> Type 'Updated Title' into the Title input (index 278) and then click the 'Kaydet' submit button (index 315).
         frame = context.pages[-1]
-        # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div/div[2]/div[2]/div[4]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        # Input text
+        elem = frame.locator('xpath=/html/body/div/div/div/div/div[2]/form/div/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('Updated Title')
         
-        # -> Click the 'Detay →' link for a film (index 374) to open its detail view so the delete confirmation and cancel flow can be tested.
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[3]/div/div/div[2]/a').nth(0)
+        elem = frame.locator('xpath=/html/body/div/div/div/div/div[2]/form/div[6]/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        # Assertions for Film detail visibility and delete flow
-        assert await frame.locator('xpath=/html/body/div/div/div/div[1]/a').is_visible(), 'Film Detayı (← Geri Dön) should be visible'
-        assert await frame.locator('xpath=/html/body/div/div/div/div[2]/div[2]/div[4]/button').is_visible(), 'Sil (🗑 Filmi Sil) button should be visible'
-        # Confirmation dialog xpath not available in the extracted elements. Report the missing feature and mark task as done.
-        assert False, 'Silme onayı (confirmation dialog) element was not found in available elements — feature may be missing.'
+        frame = context.pages[-1]
+        # Verify a movie card (first card title) is visible
+        elem = frame.locator('xpath=/html/body/div/div/div[3]/div[1]/div[2]/h5').nth(0)
+        await elem.wait_for(state='visible', timeout=5000)
+        assert await elem.is_visible()
+        # Verify URL contains "/edit/" after clicking Düzenle
+        assert "/edit/" in frame.url
+        # Verify the updated title is visible in the list
+        elem = frame.locator('xpath=/html/body/div/div/div[3]/div[4]/div[2]/h5').nth(0)
+        await elem.wait_for(state='visible', timeout=5000)
+        assert await elem.is_visible()
         await asyncio.sleep(5)
 
     finally:

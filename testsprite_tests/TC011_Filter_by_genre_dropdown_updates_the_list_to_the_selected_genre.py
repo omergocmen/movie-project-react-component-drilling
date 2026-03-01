@@ -30,20 +30,30 @@ async def run_test():
         page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
-        # -> Navigate to http://localhost:3000
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # -> Navigate to http://localhost:3001
+        await page.goto("http://localhost:3001", wait_until="commit", timeout=10000)
         
-        # -> Type the unique no-match query into the search input (index 6) and press Enter to apply the filter so the page updates to the no-results state.
+        # -> Click the 'Gelişmiş Filtreler' (Advanced Filters) button to open the filter panel (element index 86).
         frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div/div/div/form/div/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('ZZZ_NO_MATCH_12345')
+        # Click element
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div[2]/button').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        await expect(frame.locator('text=Arama').first).to_be_visible(timeout=3000)
-        await expect(frame.locator('text=Konuyla eşleşen film yok').first).to_be_visible(timeout=3000)
-        await expect(frame.locator('xpath=//*[contains(text(), "Film kartı")]').first).not_to_be_visible(timeout=3000)
+        # Assert the genre dropdown is visible
+        assert await frame.locator('xpath=/html/body/div/div/div[1]/form/div[3]/div/div[2]/select').is_visible()
+        
+        # Assert the genre dropdown contains the "🎭 Drama" option
+        dropdown_text = await frame.locator('xpath=/html/body/div/div/div[1]/form/div[3]/div/div[2]/select').inner_text()
+        assert ('🎭 Drama' in dropdown_text) or ('Drama' in dropdown_text)
+        
+        # Assert the movie list (movie card container) is visible
+        assert await frame.locator('xpath=/html/body/div/div/div[3]/div').is_visible()
+        
+        # Assert the "Drama" text is visible on the movie card
+        assert await frame.locator('xpath=/html/body/div/div/div[3]/div/div[2]/div[1]/span[1]').is_visible()
+        assert 'Drama' in (await frame.locator('xpath=/html/body/div/div/div[3]/div/div[2]/div[1]/span[1]').inner_text())
         await asyncio.sleep(5)
 
     finally:

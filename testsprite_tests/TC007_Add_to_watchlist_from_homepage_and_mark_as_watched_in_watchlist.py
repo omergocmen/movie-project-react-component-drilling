@@ -30,25 +30,33 @@ async def run_test():
         page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
-        # -> Navigate to http://localhost:3000
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # -> Navigate to http://localhost:3001
+        await page.goto("http://localhost:3001", wait_until="commit", timeout=10000)
         
-        # -> Click the 'İsim' sort button (element index 66) to ensure name-sorting is active.
+        # -> Click the watchlist (heart) icon on the first visible movie card to add it to the watchlist, then open the Watchlist page by clicking the '❤️ Listem' link.
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[2]/button').nth(0)
+        elem = frame.locator('xpath=/html/body/div/div/div[3]/div/div/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div[2]/button[2]').nth(0)
+        elem = frame.locator('xpath=/html/body/div/nav/div/div/a').nth(0)
+        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Click the 'İzledim' button on the first visible watchlist item (element index 324) to toggle/confirm watched status.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div/div/div/div/section/div/div/div[2]/div[2]/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
         frame = context.pages[-1]
-        # The page does not contain any element with the text 'A→Z' in the provided available elements.
-        raise AssertionError("Feature missing: sorting indicator 'A→Z' not found on the page among the available elements. Cannot verify change of sorting criterion from 'İsim' to 'Puan'. Task marked as done.")
+        # Verify a movie card (use the 'Detay' link) is visible on the homepage
+        assert await frame.locator('xpath=/html/body/div[1]/div/div/div/section/div/div/div[2]/div[2]/a').is_visible(), "Expected a movie card (Detay link) to be visible on the homepage"
+        # The add-to-watchlist (heart) icon on the movie card is not present in the available elements list; cannot perform the add-to-watchlist step.
+        raise AssertionError("Add-to-watchlist (heart) icon on the movie card is not present (feature missing). Marking task as done.")
         await asyncio.sleep(5)
 
     finally:

@@ -30,29 +30,29 @@ async def run_test():
         page = await context.new_page()
 
         # Interact with the page elements to simulate user flow
-        # -> Navigate to http://localhost:3000
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # -> Navigate to http://localhost:3001
+        await page.goto("http://localhost:3001", wait_until="commit", timeout=10000)
         
-        # -> Type a single space into the 'Film Ara' input field (index 5) to verify that entering only whitespace does not clear the film list.
-        frame = context.pages[-1]
-        # Input text
-        elem = frame.locator('xpath=/html/body/div/div/div/form/div/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill(' ')
-        
-        # -> Click the 'Temizle' (Aramayı Temizle) button (index 205) to clear the search input, then verify the film list is still visible.
+        # -> Click the 'Gelişmiş Filtreler' (Advanced Filters) button to open the filter panel.
         frame = context.pages[-1]
         # Click element
-        elem = frame.locator('xpath=/html/body/div/div/div/form/div/div/button').nth(0)
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div[2]/button').nth(0)
         await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        
+        # -> Type '7' into the 'Min. Puan' (minimum rating) input (interactive element index 260). After typing, verify the movie list updates and that the text '7' is visible in the input.
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div/div/div/form/div[3]/div/div[3]/input').nth(0)
+        await page.wait_for_timeout(3000); await elem.fill('7')
         
         # --> Assertions to verify final state
         frame = context.pages[-1]
-        # Verify the film list is still visible after typing only whitespace into the search input
-        await page.wait_for_timeout(500)
-        assert await frame.locator('xpath=/html/body/div[1]/div/div[3]/div[1]/div[2]/h5').is_visible()
-        # Verify the film list remains visible after clicking the clear button
-        await page.wait_for_timeout(500)
-        assert await frame.locator('xpath=/html/body/div[1]/div/div[3]/div[1]/div[2]/h5').is_visible()
+        # Verify the minimum rating filter input is visible
+        assert await frame.locator('xpath=/html/body/div/div/div[1]/form/div[3]/div/div[3]/input').is_visible()
+        # Verify a movie item (movie list) is visible
+        assert await frame.locator('xpath=/html/body/div/div/div[3]/div[1]').is_visible()
+        # Verify the minimum rating input contains the text '7'
+        assert await frame.locator('xpath=/html/body/div/div/div[1]/form/div[3]/div/div[3]/input').input_value() == '7'
         await asyncio.sleep(5)
 
     finally:

@@ -49,6 +49,15 @@ export default class movieList extends Component {
                 ⭐ {movie.rating}
               </div>
 
+              {/* Watchlist heart button */}
+              <button
+                className={`card-watchlist-btn ${movie.watchlisted ? 'active' : ''}`}
+                onClick={(e) => { e.stopPropagation(); this.props.onToggleWatchlist(movie.id); }}
+                title={movie.watchlisted ? 'Listeden Çıkar' : 'Listeye Ekle'}
+              >
+                {movie.watchlisted ? '❤️' : '🤍'}
+              </button>
+
               {/* Hover overlay with Quick View button */}
               <div className="card-img-overlay">
                 <a
