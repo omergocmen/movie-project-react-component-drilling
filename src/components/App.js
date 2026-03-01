@@ -8,6 +8,7 @@ import Searchbar from "./searchbar";
 import EditMovie from "./editMovie";
 import MovieDetail from "./movieDetail";
 import AddMovie from "./addMovie";
+import Watchlist from "./watchlist";
 
 import {
   BrowserRouter as Router,
@@ -18,9 +19,9 @@ import {
 
 
 /* ── useParams wrappers (class components don't support hooks directly) ── */
-function MovieDetailWrapper({ movies, onDeleteMovie }) {
+function MovieDetailWrapper({ movies, onDeleteMovie, onToggleWatchlist, onToggleWatched }) {
   const { id } = useParams();
-  return <MovieDetail movieId={id} movies={movies} onDeleteMovie={onDeleteMovie} />;
+  return <MovieDetail movieId={id} movies={movies} onDeleteMovie={onDeleteMovie} onToggleWatchlist={onToggleWatchlist} onToggleWatched={onToggleWatched} />;
 }
 
 function EditMovieWrapper({ movies, onUpdateMovie }) {
@@ -96,6 +97,26 @@ export default class App extends Component {
     }
   };
 
+  toggleWatchlist = (movieId) => {
+    const updated = this.state.movies.map(m =>
+      String(m.id) === String(movieId)
+        ? { ...m, watchlisted: !m.watchlisted, watched: m.watchlisted ? false : m.watched }
+        : m
+    );
+    saveMovies(updated);
+    this.setState({ movies: updated });
+  };
+
+  toggleWatched = (movieId) => {
+    const updated = this.state.movies.map(m =>
+      String(m.id) === String(movieId)
+        ? { ...m, watched: !m.watched, watchlisted: true }
+        : m
+    );
+    saveMovies(updated);
+    this.setState({ movies: updated });
+  };
+
   applyFilters = (movies) => {
     const { searchQuery, filters } = this.state;
     return movies.filter((movie) => {
@@ -150,6 +171,14 @@ export default class App extends Component {
               </div>
             </a>
             <div className="navbar-actions">
+              <a href="/watchlist" className="btn btn-watchlist-nav" style={{ textDecoration: 'none' }}>
+                ❤️ Listem
+                {this.state.movies.filter(m => m.watchlisted).length > 0 && (
+                  <span className="watchlist-nav-badge">
+                    {this.state.movies.filter(m => m.watchlisted).length}
+                  </span>
+                )}
+              </a>
               <a href="/add" className="btn btn-success" style={{ textDecoration: 'none' }}>
                 ＋ Yeni Film
               </a>
@@ -188,7 +217,11 @@ export default class App extends Component {
 
                 {sortedMovies.length > 0 && (
                   <div className="movies-grid">
-                    <MovieList movies={sortedMovies} deleteMovie={this.deleteMovieToUi} />
+                    <MovieList
+                      movies={sortedMovies}
+                      deleteMovie={this.deleteMovieToUi}
+                      onToggleWatchlist={this.toggleWatchlist}
+                    />
                   </div>
                 )}
 
@@ -220,6 +253,18 @@ export default class App extends Component {
               </div>
             } />
 
+            {/* WATCHLIST */}
+            <Route path="/watchlist" element={
+              <div className="app-container">
+                <Watchlist
+                  movies={movies}
+                  onToggleWatchlist={this.toggleWatchlist}
+                  onToggleWatched={this.toggleWatched}
+                  onDeleteMovie={this.deleteMovieToUi}
+                />
+              </div>
+            } />
+
             {/* EDIT — useParams wrapper passes id as prop */}
             <Route path="/edit/:id" element={
               <div className="detail-container">
@@ -236,6 +281,8 @@ export default class App extends Component {
                 <MovieDetailWrapper
                   movies={movies}
                   onDeleteMovie={this.deleteMovieToUi}
+                  onToggleWatchlist={this.toggleWatchlist}
+                  onToggleWatched={this.toggleWatched}
                 />
               </div>
             } />
