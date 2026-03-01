@@ -55,6 +55,9 @@ export default class MovieDetail extends Component {
             <div className="loading-state"><div className="spinner"></div></div>
         );
 
+        // Use live data from props so watchlisted/watched flags update instantly
+        const liveMovie = (this.props.movies || []).find(m => String(m.id) === String(movie.id)) || movie;
+
         return (
             <>
                 <div className="back-button">
@@ -95,6 +98,20 @@ export default class MovieDetail extends Component {
                         </div>
 
                         <div className="button-group">
+                            <button
+                                className={`btn ${liveMovie.watchlisted ? 'btn-watchlist-active' : 'btn-watchlist'}`}
+                                onClick={() => this.props.onToggleWatchlist(movie.id)}
+                            >
+                                {liveMovie.watchlisted ? '❤️ Listemdeyim' : '🤍 Listeye Ekle'}
+                            </button>
+                            {liveMovie.watchlisted && (
+                                <button
+                                    className={`btn ${liveMovie.watched ? 'btn-watched-active' : 'btn-watched'}`}
+                                    onClick={() => this.props.onToggleWatched(movie.id)}
+                                >
+                                    {liveMovie.watched ? '✅ İzledim' : '👁 İzledim Olarak İşaretle'}
+                                </button>
+                            )}
                             <a href={`/edit/${movie.id}`} className="btn btn-warning" style={{ textDecoration: 'none' }}>
                                 ✎ Filmi Düzenle
                             </a>
